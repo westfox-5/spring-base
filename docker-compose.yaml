@@ -1,0 +1,31 @@
+---
+networks:
+  spring-net:
+    name: spring-net
+    driver: bridge
+
+services:
+  spring-base:
+    # built with
+    # ./mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=spring-base" -DskipTests
+    image: westfox5/repository:spring-base
+    depends_on:
+      - postgresql
+    networks:
+      - spring-net
+    ports:
+      - ${APP_PORT}:8080
+    environment:
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  postgresql:
+    image: postgres:alpine
+    networks:
+      - spring-net
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
